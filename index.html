@@ -232,6 +232,24 @@
         .act-cartridge { background: rgba(0, 230, 118, 0.2); color: var(--green-accent); border: 1px solid rgba(0, 230, 118, 0.3); }
         .act-cip { background: rgba(179, 136, 255, 0.2); color: var(--purple-accent); border: 1px solid rgba(179, 136, 255, 0.3); }
 
+        /* BUTTON DELETE STYLES */
+        .btn-delete {
+            background: rgba(255, 61, 0, 0.15);
+            color: var(--red-accent);
+            border: 1px solid rgba(255, 61, 0, 0.4);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-delete:hover {
+            background: var(--red-accent);
+            color: #fff;
+        }
+
         /* TOAST NOTIFICATION */
         .toast {
             position: fixed;
@@ -398,6 +416,7 @@
                         <th>KOMPONEN / TINDAKAN</th>
                         <th>DURASI BERJALAN</th>
                         <th>OPERATOR</th>
+                        <th style="text-align: center;">AKSI</th>
                     </tr>
                 </thead>
                 <tbody id="historyTableBody">
@@ -410,7 +429,7 @@
     <div id="toast" class="toast">Notifikasi</div>
 
     <script>
-        const DB_URL = "https://dashboard-ro-ipa-semanan-4335e-default-rtdb.firebaseio.com/ipa_semanan_logs.json";
+        const BASE_URL = "https://dashboard-ro-ipa-semanan-4335e-default-rtdb.firebaseio.com/ipa_semanan_logs";
 
         let roLogs = [];
 
@@ -430,7 +449,7 @@
         // Fetch logs dari Firebase Realtime Database
         async function fetchLogs() {
             try {
-                const res = await fetch(DB_URL);
+                const res = await fetch(`${BASE_URL}.json`);
                 const data = await res.json();
                 roLogs = [];
                 if (data) {
@@ -534,6 +553,9 @@
                     <td><span class="tag-action ${badgeClass}">${log.action}</span></td>
                     <td>${timeInfo.days} Hari ${timeInfo.hours} Jam lalu</td>
                     <td>${log.operator || '-'}</td>
+                    <td style="text-align: center;">
+                        <button class="btn-delete" onclick="deleteRoLog('${log.id}', '${log.plant}', '${log.action}')">🗑️ Hapus</button>
+                    </td>
                 `;
                 tbody.appendChild(tr);
             });
@@ -555,7 +577,7 @@
             const datetime = `${date}T${time}`;
 
             try {
-                await fetch(DB_URL, {
+                await fetch(`${BASE_URL}.json`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ plant, action, datetime, operator })
@@ -569,6 +591,29 @@
             } finally {
                 btn.disabled = false;
                 btn.innerText = "+ SIMPAN RECORD";
+            }
+        }
+
+        // Hapus Record dari Firebase
+        async function deleteRoLog(id, plant, action) {
+            if (!confirm(`Apakah Anda yakin ingin menghapus record ${action} pada ${plant}?`)) {
+                return;
+            }
+
+            try {
+                const res = await fetch(`${BASE_URL}/${id}.json`, {
+                    method: 'DELETE'
+                });
+
+                if (res.ok) {
+                    showToast(`Record berhasil dihapus!`);
+                    await fetchLogs();
+                } else {
+                    showToast("Gagal menghapus record dari server.");
+                }
+            } catch (err) {
+                console.error("Gagal menghapus:", err);
+                showToast("Terjadi kesalahan koneksi saat menghapus.");
             }
         }
 
