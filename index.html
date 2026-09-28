@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Maintenance RO</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800;900&family=Share+Tech+Mono&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #030712;
+            --card-bg: #0b1329;
+            --border-color: rgba(0, 229, 255, 0.2);
+            --cyan-accent: #00e5ff;
+            --green-accent: #00e676;
+            --red-accent: #ff3d00;
+            --yellow-accent: #ffd740;
+            --purple-accent: #b388ff;
+            --text-muted: #64748b;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; user-select: none; }
+        body { background: var(--bg-color); color: #fff; min-height: 100vh; padding: 16px; display: flex; flex-direction: column; gap: 16px; }
+
+        header {
+            background: linear-gradient(145deg, #0f172a, #0b132d);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-title h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 18px;
+            font-weight: 900;
+            color: var(--cyan-accent);
+            text-shadow: 0 0 10px rgba(0,229,255,0.4);
+        }
+
+        .time-box {
+            font-family: 'Share Tech Mono', monospace;
+            text-align: right;
+            color: var(--cyan-accent);
+            font-size: 14px;
+        }
+
+        .ro-section {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .section-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 14px;
+            font-weight: 800;
+            color: var(--yellow-accent);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .ro-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+            gap: 12px;
+        }
+
+        .ro-card {
+            background: rgba(15, 23, 42, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 8px;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .ro-card-header {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 12px;
+            font-weight: 800;
+            color: var(--cyan-accent);
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            padding-bottom: 4px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .ro-stat-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(3, 7, 18, 0.5);
+            padding: 8px;
+            border-radius: 4px;
+        }
+
+        .ro-stat-label { font-size: 10px; color: var(--text-muted); font-weight: 600; }
+        .ro-stat-days { font-family: 'Share Tech Mono', monospace; font-size: 13px; font-weight: 800; }
+        
+        .status-normal { color: var(--green-accent); }
+        .status-warn { color: var(--yellow-accent); }
+        .status-danger { color: var(--red-accent); animation: pulse 1s infinite alternate; }
+
+        @keyframes pulse { 0% { opacity: 0.5; } 100% { opacity: 1; } }
+
+        .form-box {
+            background: rgba(15, 23, 42, 0.9);
+            border: 1px dashed var(--yellow-accent);
+            border-radius: 8px;
+            padding: 12px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: flex-end;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            flex: 1;
+            min-width: 130px;
+        }
+
+        .input-group label { font-size: 10px; font-weight: 700; color: var(--text-muted); }
+        .input-group select, .input-group input {
+            background: #030712;
+            border: 1px solid var(--border-color);
+            color: #fff;
+            padding: 7px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        .btn-submit {
+            background: var(--yellow-accent);
+            color: #000;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-weight: 800;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-submit:hover { background: #ffe082; }
+
+        .history-table-box {
+            max-height: 220px;
+            overflow-y: auto;
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 6px;
+        }
+
+        table { width: 100%; border-collapse: collapse; font-size: 11px; text-align: left; }
+        th { background: #030712; color: var(--text-muted); padding: 8px; position: sticky; top: 0; font-weight: 700; }
+        td { padding: 8px; border-top: 1px solid rgba(255,255,255,0.05); }
+        tr:nth-child(even) { background: rgba(255,255,255,0.02); }
+        .tag-action { padding: 2px 6px; border-radius: 3px; font-size: 9px; font-weight: 800; }
+        .act-cartridge { background: rgba(0, 230, 118, 0.2); color: var(--green-accent); }
+        .act-cip { background: rgba(179, 136, 255, 0.2); color: var(--purple-accent); }
+        .btn-del { color: var(--red-accent); cursor: pointer; border: none; background: none; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-title">
+            <h1>RO SYSTEM MAINTENANCE DASHBOARD</h1>
+        </div>
+        <div class="time-box">
+            <div id="clock">00:00:00</div>
+            <div style="font-size: 9px; color: var(--text-muted);">SYSTEM LOGGING ACTIVE</div>
+        </div>
+    </header>
+
+    <div class="ro-section">
+        <div class="section-title">
+            🛠️ MONITORING KETAHANAN CARTRIDGE & CIP RO (4 UNIT)
+        </div>
+
+        <!-- 4 RO SUMMARY CARDS -->
+        <div class="ro-grid">
+            <!-- RO 1 -->
+            <div class="ro-card">
+                <div class="ro-card-header"><span>SYSTEM RO 1</span><span style="font-size: 9px; color: var(--text-muted);">ACTIVE</span></div>
+                <div class="ro-stat-item">
+                    <div class="ro-stat-label">Ketahanan Cartridge:</div>
+                    <div class="ro-stat-days" id="ro1-cartridge-days">0 Hari 0 Jam</div>
+                </div>
+                <div class="ro-stat-item">
+                    <div class="ro-stat-label">Ketahanan CIP RO:</div>
+                    <div class="ro-stat-days" id="ro1-cip-days">0 Hari 0 Jam</div>
+                </div>
+            </div>
+
+            <!-- RO 2 -->
+            <div class="ro-card">
+                <div class="ro-card-header"><span>SYSTEM RO 2</span><span style="font-size: 9px; color: var(--text-muted);">ACTIVE</span></div>
+                <div class="ro-stat-item">
+                    <div class="ro-stat-label">Ketahanan Cartridge:</div>
+                    <div class="ro-stat-days" id="ro2-cartridge-days">0 Hari 0 Jam</div>
+                </div>
+                <div class="ro-stat-item">
+                    <div class="ro-stat-label">Ketahanan CIP RO:</div>
+                    <div class="ro-stat-days" id="ro2-cip-days">0 Hari 0 Jam</div>
+                </div>
+            </div>
+
+            <!-- RO 3 -->
+            <div class="ro-card">
+                <div class="ro-card-header"><span>SYSTEM RO 3</span><span style="font-size: 9px; color: var(--text-muted);">ACTIVE</span></div>
+                <div class="ro-stat-item">
+                    <div class="ro-stat-label">Ketahanan Cartridge:</div>
+                    <div class="ro-stat-days" id="ro3-cartridge-days">0 Hari 0 Jam</div>
+                </div>
+                <div class="ro-stat-item">
+                    <div class="ro-stat-label">Ketahanan CIP RO:</div>
+                    <div class="ro-stat-days" id="ro3-cip-days">0 Hari 0 Jam</div>
+                </div>
+            </div>
+
+            <!-- RO 4 -->
+            <div class="ro-card">
+                <div class="ro-card-header"><span>SYSTEM RO 4</span><span style="font-size: 9px; color: var(--text-muted);">ACTIVE</span></div>
+                <div class="ro-stat-item">
+                    <div class="ro-stat-label">Ketahanan Cartridge:</div>
+                    <div class="ro-stat-days" id="ro4-cartridge-days">0 Hari 0 Jam</div>
+                </div>
+                <div class="ro-stat-item">
+                    <div class="ro-stat-label">Ketahanan CIP RO:</div>
+                    <div class="ro-stat-days" id="ro4-cip-days">0 Hari 0 Jam</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- FORM INPUT PERGANTIAN / CIP -->
+        <form class="form-box" id="roForm" onsubmit="saveRoLog(event)">
+            <div class="input-group">
+                <label>PILIH UNIT RO:</label>
+                <select id="roUnit" required>
+                    <option value="RO 1">RO 1</option>
+                    <option value="RO 2">RO 2</option>
+                    <option value="RO 3">RO 3</option>
+                    <option value="RO 4">RO 4</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label>JENIS TINDAKAN:</label>
+                <select id="roAction" required>
+                    <option value="Ganti Cartridge">Ganti Cartridge</option>
+                    <option value="CIP RO">CIP RO</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label>TANGGAL:</label>
+                <input type="date" id="roDate" required>
+            </div>
+            <div class="input-group">
+                <label>JAM EKSEKUSI:</label>
+                <input type="time" id="roTime" required>
+            </div>
+            <div class="input-group">
+                <label>NAMA OPERATOR:</label>
+                <input type="text" id="roOperator" placeholder="Nama Operator" required>
+            </div>
+            <button type="submit" class="btn-submit">+ SIMPAN RECORD</button>
+        </form>
+
+        <!-- TABEL HISTORI LOGS -->
+        <div class="history-table-box">
+            <table>
+                <thead>
+                    <tr>
+                        <th>TANGGAL & JAM</th>
+                        <th>UNIT RO</th>
+                        <th>TINDAKAN</th>
+                        <th>DURASI BERJALAN</th>
+                        <th>OPERATOR</th>
+                        <th>AKSI</th>
+                    </tr>
+                </thead>
+                <tbody id="historyTableBody">
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Set Default Tanggal & Jam Hari ini
+        const now = new Date();
+        document.getElementById('roDate').valueAsDate = now;
+        document.getElementById('roTime').value = now.toTimeString().substring(0,5);
+
+        function updateClock() {
+            const current = new Date();
+            document.getElementById('clock').innerText = current.toTimeString().split(' ')[0];
+            // Update durasi secara real-time setiap detik
+            renderROStats();
+        }
+        setInterval(updateClock, 1000);
+
+        // Persistent Logs Data (Internal Browser Storage)
+        let roLogs = JSON.parse(localStorage.getItem('ro_maintenance_logs')) || [
+            { id: 1, unit: 'RO 1', action: 'Ganti Cartridge', datetime: '2026-09-01T08:00', operator: 'Adi' },
+            { id: 2, unit: 'RO 1', action: 'CIP RO', datetime: '2026-09-15T10:30', operator: 'Budi' }
+        ];
+
+        // Rumus Menghitung Hari dan Jam
+        function calculateDaysAndHours(datetimeStr) {
+            const start = new Date(datetimeStr);
+            const current = new Date();
+            const diffMs = current - start;
+            if (diffMs < 0) return { days: 0, hours: 0, totalDays: 0 };
+            
+            const totalHours = Math.floor(diffMs / (1000 * 60 * 60));
+            const days = Math.floor(totalHours / 24);
+            const hours = totalHours % 24;
+            
+            return { days, hours, totalDays: days };
+        }
+
+        function renderROStats() {
+            const units = ['RO 1', 'RO 2', 'RO 3', 'RO 4'];
+            
+            units.forEach((unit, idx) => {
+                const idNum = idx + 1;
+                
+                const lastCart = roLogs.filter(l => l.unit === unit && l.action === 'Ganti Cartridge')
+                                       .sort((a,b) => new Date(b.datetime) - new Date(a.datetime))[0];
+                
+                const lastCip = roLogs.filter(l => l.unit === unit && l.action === 'CIP RO')
+                                      .sort((a,b) => new Date(b.datetime) - new Date(a.datetime))[0];
+
+                updateCardDisplay(`ro${idNum}-cartridge-days`, lastCart, 30); // Warning di 30 hari
+                updateCardDisplay(`ro${idNum}-cip-days`, lastCip, 14);       // Warning di 14 hari
+            });
+
+            renderHistoryTable();
+        }
+
+        function updateCardDisplay(elemId, log, warnLimit) {
+            const elem = document.getElementById(elemId);
+            if (log) {
+                const timeInfo = calculateDaysAndHours(log.datetime);
+                elem.textContent = `${timeInfo.days} Hari ${timeInfo.hours} Jam`;
+
+                // Indikator Warna
+                if (timeInfo.totalDays >= warnLimit) {
+                    elem.className = "ro-stat-days status-danger";
+                } else if (timeInfo.totalDays >= warnLimit - 5) {
+                    elem.className = "ro-stat-days status-warn";
+                } else {
+                    elem.className = "ro-stat-days status-normal";
+                }
+            } else {
+                elem.textContent = `- (Belum ada)`;
+                elem.className = "ro-stat-days";
+            }
+        }
+
+        function renderHistoryTable() {
+            const tbody = document.getElementById('historyTableBody');
+            tbody.innerHTML = '';
+
+            const sortedLogs = [...roLogs].sort((a,b) => new Date(b.datetime) - new Date(a.datetime));
+
+            sortedLogs.forEach(log => {
+                const tr = document.createElement('tr');
+                const badgeClass = log.action === 'Ganti Cartridge' ? 'act-cartridge' : 'act-cip';
+                const dt = new Date(log.datetime);
+                const dateFormatted = `${dt.toLocaleDateString('id-ID')} ${dt.toTimeString().substring(0,5)}`;
+                const timeInfo = calculateDaysAndHours(log.datetime);
+                
+                tr.innerHTML = `
+                    <td>${dateFormatted}</td>
+                    <td><strong>${log.unit}</strong></td>
+                    <td><span class="tag-action ${badgeClass}">${log.action}</span></td>
+                    <td>${timeInfo.days} Hari ${timeInfo.hours} Jam lalu</td>
+                    <td>${log.operator || '-'}</td>
+                    <td><button class="btn-del" onclick="deleteLog(${log.id})">✕</button></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function saveRoLog(e) {
+            e.preventDefault();
+            const unit = document.getElementById('roUnit').value;
+            const action = document.getElementById('roAction').value;
+            const date = document.getElementById('roDate').value;
+            const time = document.getElementById('roTime').value;
+            const operator = document.getElementById('roOperator').value;
+
+            const datetime = `${date}T${time}`;
+
+            roLogs.push({ id: Date.now(), unit, action, datetime, operator });
+            localStorage.setItem('ro_maintenance_logs', JSON.stringify(roLogs));
+
+            document.getElementById('roOperator').value = '';
+            renderROStats();
+            alert(`Record ${action} ${unit} berhasil disimpan!`);
+        }
+
+        function deleteLog(id) {
+            if(confirm('Yakin ingin menghapus data histori ini?')) {
+                roLogs = roLogs.filter(l => l.id !== id);
+                localStorage.setItem('ro_maintenance_logs', JSON.stringify(roLogs));
+                renderROStats();
+            }
+        }
+
+        renderROStats();
+    </script>
+</body>
+</html>
