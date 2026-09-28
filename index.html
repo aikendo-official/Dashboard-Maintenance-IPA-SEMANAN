@@ -3,57 +3,97 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Maintenance RO</title>
+    <title>Dashboard Maintenance IPA SEMANAN</title>
+    <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800;900&family=Share+Tech+Mono&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    
     <style>
         :root {
             --bg-color: #030712;
             --card-bg: #0b1329;
+            --card-bg-header: #0f172a;
             --border-color: rgba(0, 229, 255, 0.2);
             --cyan-accent: #00e5ff;
             --green-accent: #00e676;
             --red-accent: #ff3d00;
             --yellow-accent: #ffd740;
             --purple-accent: #b388ff;
+            --orange-accent: #ff9100;
             --text-muted: #64748b;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; user-select: none; }
         body { background: var(--bg-color); color: #fff; min-height: 100vh; padding: 16px; display: flex; flex-direction: column; gap: 16px; }
 
+        /* HEADER STYLES */
         header {
             background: linear-gradient(145deg, #0f172a, #0b132d);
             border: 1px solid var(--border-color);
             border-radius: 12px;
-            padding: 12px 20px;
+            padding: 16px 24px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            box-shadow: 0 4px 20px rgba(0, 229, 255, 0.08);
         }
 
-        .header-title h1 {
+        .header-title-box h1 {
             font-family: 'Orbitron', sans-serif;
-            font-size: 18px;
+            font-size: 20px;
             font-weight: 900;
             color: var(--cyan-accent);
-            text-shadow: 0 0 10px rgba(0,229,255,0.4);
+            text-shadow: 0 0 12px rgba(0,229,255,0.4);
+            letter-spacing: 1px;
+            margin: 0;
         }
 
         .time-box {
-            font-family: 'Share Tech Mono', monospace;
-            text-align: right;
-            color: var(--cyan-accent);
-            font-size: 14px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            justify-content: center;
+            background: rgba(3, 7, 18, 0.6);
+            padding: 6px 14px;
+            border-radius: 8px;
+            border: 1px solid rgba(0, 229, 255, 0.15);
         }
 
+        .time-box #clock {
+            font-family: 'Share Tech Mono', monospace;
+            color: var(--cyan-accent);
+            font-size: 18px;
+            font-weight: 700;
+            line-height: 1.1;
+            letter-spacing: 1px;
+        }
+
+        .time-box .time-status {
+            font-size: 9px;
+            color: var(--text-muted);
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            margin-top: 2px;
+        }
+
+        /* SECTION STYLES */
         .ro-section {
             background: var(--card-bg);
             border: 1px solid var(--border-color);
             border-radius: 12px;
-            padding: 16px;
+            padding: 18px;
             display: flex;
             flex-direction: column;
-            gap: 14px;
+            gap: 16px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
         }
 
         .section-title {
@@ -66,9 +106,10 @@
             gap: 8px;
         }
 
+        /* RO GRID CARDS */
         .ro-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
             gap: 12px;
         }
 
@@ -76,19 +117,19 @@
             background: rgba(15, 23, 42, 0.7);
             border: 1px solid rgba(255, 255, 255, 0.08);
             border-radius: 8px;
-            padding: 12px;
+            padding: 14px;
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 10px;
         }
 
         .ro-card-header {
             font-family: 'Orbitron', sans-serif;
-            font-size: 12px;
+            font-size: 13px;
             font-weight: 800;
             color: var(--cyan-accent);
             border-bottom: 1px solid rgba(255,255,255,0.08);
-            padding-bottom: 4px;
+            padding-bottom: 6px;
             display: flex;
             justify-content: space-between;
         }
@@ -97,13 +138,13 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: rgba(3, 7, 18, 0.5);
-            padding: 8px;
-            border-radius: 4px;
+            background: rgba(3, 7, 18, 0.6);
+            padding: 8px 10px;
+            border-radius: 6px;
         }
 
         .ro-stat-label { font-size: 10px; color: var(--text-muted); font-weight: 600; }
-        .ro-stat-days { font-family: 'Share Tech Mono', monospace; font-size: 13px; font-weight: 800; }
+        .ro-stat-days { font-family: 'Share Tech Mono', monospace; font-size: 12px; font-weight: 800; }
         
         .status-normal { color: var(--green-accent); }
         .status-warn { color: var(--yellow-accent); }
@@ -111,14 +152,15 @@
 
         @keyframes pulse { 0% { opacity: 0.5; } 100% { opacity: 1; } }
 
+        /* FORM STYLES */
         .form-box {
             background: rgba(15, 23, 42, 0.9);
-            border: 1px dashed var(--yellow-accent);
-            border-radius: 8px;
-            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 14px;
             display: flex;
             flex-wrap: wrap;
-            gap: 10px;
+            gap: 12px;
             align-items: flex-end;
         }
 
@@ -130,130 +172,191 @@
             min-width: 130px;
         }
 
-        .input-group label { font-size: 10px; font-weight: 700; color: var(--text-muted); }
+        .input-group label { font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; }
         .input-group select, .input-group input {
             background: #030712;
             border: 1px solid var(--border-color);
             color: #fff;
-            padding: 7px 10px;
-            border-radius: 4px;
+            padding: 8px 10px;
+            border-radius: 6px;
             font-size: 12px;
+            outline: none;
+        }
+
+        .input-group select:focus, .input-group input:focus {
+            border-color: var(--cyan-accent);
         }
 
         .btn-submit {
-            background: var(--yellow-accent);
+            background: var(--cyan-accent);
             color: #000;
             border: none;
-            padding: 8px 16px;
-            border-radius: 4px;
+            padding: 9px 18px;
+            border-radius: 6px;
             font-weight: 800;
             font-size: 12px;
             cursor: pointer;
             transition: all 0.2s;
         }
 
-        .btn-submit:hover { background: #ffe082; }
+        .btn-submit:hover { background: #80f4ff; }
+
+        /* TABLE & FILTER STYLES */
+        .filter-bar {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            gap: 10px;
+            background: rgba(15, 23, 42, 0.5);
+            padding: 10px 12px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .filter-options { display: flex; gap: 8px; flex-wrap: wrap; }
 
         .history-table-box {
-            max-height: 220px;
+            max-height: 280px;
             overflow-y: auto;
             border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 6px;
+            border-radius: 8px;
         }
 
         table { width: 100%; border-collapse: collapse; font-size: 11px; text-align: left; }
-        th { background: #030712; color: var(--text-muted); padding: 8px; position: sticky; top: 0; font-weight: 700; }
-        td { padding: 8px; border-top: 1px solid rgba(255,255,255,0.05); }
+        th { background: #030712; color: var(--text-muted); padding: 10px; position: sticky; top: 0; font-weight: 700; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        td { padding: 10px; border-top: 1px solid rgba(255,255,255,0.05); }
         tr:nth-child(even) { background: rgba(255,255,255,0.02); }
-        .tag-action { padding: 2px 6px; border-radius: 3px; font-size: 9px; font-weight: 800; }
-        .act-cartridge { background: rgba(0, 230, 118, 0.2); color: var(--green-accent); }
-        .act-cip { background: rgba(179, 136, 255, 0.2); color: var(--purple-accent); }
-        .btn-del { color: var(--red-accent); cursor: pointer; border: none; background: none; font-weight: bold; }
+        
+        .tag-action { padding: 3px 8px; border-radius: 4px; font-size: 9px; font-weight: 800; text-transform: uppercase; }
+        .act-bag { background: rgba(0, 229, 255, 0.2); color: var(--cyan-accent); border: 1px solid rgba(0, 229, 255, 0.3); }
+        .act-cartridge { background: rgba(0, 230, 118, 0.2); color: var(--green-accent); border: 1px solid rgba(0, 230, 118, 0.3); }
+        .act-cip { background: rgba(179, 136, 255, 0.2); color: var(--purple-accent); border: 1px solid rgba(179, 136, 255, 0.3); }
+
+        /* TOAST NOTIFICATION */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--card-bg-header);
+            border: 1px solid var(--cyan-accent);
+            color: #fff;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 700;
+            display: none;
+            z-index: 2000;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
     </style>
 </head>
 <body>
 
     <header>
-        <div class="header-title">
-            <h1>RO SYSTEM MAINTENANCE DASHBOARD</h1>
+        <div class="header-title-box">
+            <h1>DASHBOARD MAINTENANCE IPA SEMANAN</h1>
         </div>
+
         <div class="time-box">
             <div id="clock">00:00:00</div>
-            <div style="font-size: 9px; color: var(--text-muted);">FIREBASE REALTIME ACTIVE</div>
+            <div class="time-status">REALTIME ONLINE</div>
         </div>
     </header>
 
     <div class="ro-section">
-        <div class="section-title">
-            🛠️ MONITORING KETAHANAN CARTRIDGE & CIP RO (4 UNIT)
+        <div class="section-header">
+            <div class="section-title">
+                🛠️ KETAHANAN UNIT PLANT
+            </div>
         </div>
 
-        <!-- 4 RO SUMMARY CARDS -->
+        <!-- 4 PLANT CARDS -->
         <div class="ro-grid">
+            <!-- PLANT 1 -->
             <div class="ro-card">
-                <div class="ro-card-header"><span>SYSTEM RO 1</span><span style="font-size: 9px; color: var(--text-muted);">ACTIVE</span></div>
+                <div class="ro-card-header"><span>PLANT 1</span><span style="font-size: 9px; color: var(--text-muted);">ONLINE</span></div>
                 <div class="ro-stat-item">
-                    <div class="ro-stat-label">Ketahanan Cartridge:</div>
-                    <div class="ro-stat-days" id="ro1-cartridge-days">Loading...</div>
+                    <div class="ro-stat-label">Cartridge & Bag Filter:</div>
+                    <div class="ro-stat-days" id="p1-bag-days">Loading...</div>
                 </div>
                 <div class="ro-stat-item">
-                    <div class="ro-stat-label">Ketahanan CIP RO:</div>
-                    <div class="ro-stat-days" id="ro1-cip-days">Loading...</div>
+                    <div class="ro-stat-label">Cartridge RO:</div>
+                    <div class="ro-stat-days" id="p1-cartridge-days">Loading...</div>
+                </div>
+                <div class="ro-stat-item">
+                    <div class="ro-stat-label">CIP RO:</div>
+                    <div class="ro-stat-days" id="p1-cip-days">Loading...</div>
                 </div>
             </div>
 
+            <!-- PLANT 2 -->
             <div class="ro-card">
-                <div class="ro-card-header"><span>SYSTEM RO 2</span><span style="font-size: 9px; color: var(--text-muted);">ACTIVE</span></div>
+                <div class="ro-card-header"><span>PLANT 2</span><span style="font-size: 9px; color: var(--text-muted);">ONLINE</span></div>
                 <div class="ro-stat-item">
-                    <div class="ro-stat-label">Ketahanan Cartridge:</div>
-                    <div class="ro-stat-days" id="ro2-cartridge-days">Loading...</div>
+                    <div class="ro-stat-label">Cartridge & Bag Filter:</div>
+                    <div class="ro-stat-days" id="p2-bag-days">Loading...</div>
                 </div>
                 <div class="ro-stat-item">
-                    <div class="ro-stat-label">Ketahanan CIP RO:</div>
-                    <div class="ro-stat-days" id="ro2-cip-days">Loading...</div>
+                    <div class="ro-stat-label">Cartridge RO:</div>
+                    <div class="ro-stat-days" id="p2-cartridge-days">Loading...</div>
+                </div>
+                <div class="ro-stat-item">
+                    <div class="ro-stat-label">CIP RO:</div>
+                    <div class="ro-stat-days" id="p2-cip-days">Loading...</div>
                 </div>
             </div>
 
+            <!-- PLANT 3 -->
             <div class="ro-card">
-                <div class="ro-card-header"><span>SYSTEM RO 3</span><span style="font-size: 9px; color: var(--text-muted);">ACTIVE</span></div>
+                <div class="ro-card-header"><span>PLANT 3</span><span style="font-size: 9px; color: var(--text-muted);">ONLINE</span></div>
                 <div class="ro-stat-item">
-                    <div class="ro-stat-label">Ketahanan Cartridge:</div>
-                    <div class="ro-stat-days" id="ro3-cartridge-days">Loading...</div>
+                    <div class="ro-stat-label">Cartridge & Bag Filter:</div>
+                    <div class="ro-stat-days" id="p3-bag-days">Loading...</div>
                 </div>
                 <div class="ro-stat-item">
-                    <div class="ro-stat-label">Ketahanan CIP RO:</div>
-                    <div class="ro-stat-days" id="ro3-cip-days">Loading...</div>
+                    <div class="ro-stat-label">Cartridge RO:</div>
+                    <div class="ro-stat-days" id="p3-cartridge-days">Loading...</div>
+                </div>
+                <div class="ro-stat-item">
+                    <div class="ro-stat-label">CIP RO:</div>
+                    <div class="ro-stat-days" id="p3-cip-days">Loading...</div>
                 </div>
             </div>
 
+            <!-- PLANT 4 -->
             <div class="ro-card">
-                <div class="ro-card-header"><span>SYSTEM RO 4</span><span style="font-size: 9px; color: var(--text-muted);">ACTIVE</span></div>
+                <div class="ro-card-header"><span>PLANT 4</span><span style="font-size: 9px; color: var(--text-muted);">ONLINE</span></div>
                 <div class="ro-stat-item">
-                    <div class="ro-stat-label">Ketahanan Cartridge:</div>
-                    <div class="ro-stat-days" id="ro4-cartridge-days">Loading...</div>
+                    <div class="ro-stat-label">Cartridge & Bag Filter:</div>
+                    <div class="ro-stat-days" id="p4-bag-days">Loading...</div>
                 </div>
                 <div class="ro-stat-item">
-                    <div class="ro-stat-label">Ketahanan CIP RO:</div>
-                    <div class="ro-stat-days" id="ro4-cip-days">Loading...</div>
+                    <div class="ro-stat-label">Cartridge RO:</div>
+                    <div class="ro-stat-days" id="p4-cartridge-days">Loading...</div>
+                </div>
+                <div class="ro-stat-item">
+                    <div class="ro-stat-label">CIP RO:</div>
+                    <div class="ro-stat-days" id="p4-cip-days">Loading...</div>
                 </div>
             </div>
         </div>
 
-        <!-- FORM INPUT PERGANTIAN / CIP -->
+        <!-- FORM INPUT RECORD -->
         <form class="form-box" id="roForm" onsubmit="saveRoLog(event)">
             <div class="input-group">
-                <label>PILIH UNIT RO:</label>
-                <select id="roUnit" required>
-                    <option value="RO 1">RO 1</option>
-                    <option value="RO 2">RO 2</option>
-                    <option value="RO 3">RO 3</option>
-                    <option value="RO 4">RO 4</option>
+                <label>PILIH PLANT:</label>
+                <select id="roPlant" required>
+                    <option value="Plant 1">Plant 1</option>
+                    <option value="Plant 2">Plant 2</option>
+                    <option value="Plant 3">Plant 3</option>
+                    <option value="Plant 4">Plant 4</option>
                 </select>
             </div>
             <div class="input-group">
-                <label>JENIS TINDAKAN:</label>
+                <label>JENIS KOMPONEN / TINDAKAN:</label>
                 <select id="roAction" required>
-                    <option value="Ganti Cartridge">Ganti Cartridge</option>
+                    <option value="Cartridge dan bag filter">Cartridge dan bag filter</option>
+                    <option value="Cartridge RO">Cartridge RO</option>
                     <option value="CIP RO">CIP RO</option>
                 </select>
             </div>
@@ -272,17 +375,29 @@
             <button type="submit" class="btn-submit" id="btnSubmit">+ SIMPAN RECORD</button>
         </form>
 
+        <!-- FILTER BAR -->
+        <div class="filter-bar">
+            <div class="filter-options">
+                <select id="filterPlant" onchange="renderHistoryTable()" style="background: #030712; color: #fff; border: 1px solid var(--border-color); padding: 5px; border-radius: 4px; font-size: 11px;">
+                    <option value="ALL">Semua Plant</option>
+                    <option value="Plant 1">Plant 1</option>
+                    <option value="Plant 2">Plant 2</option>
+                    <option value="Plant 3">Plant 3</option>
+                    <option value="Plant 4">Plant 4</option>
+                </select>
+            </div>
+        </div>
+
         <!-- TABEL HISTORI LOGS -->
         <div class="history-table-box">
             <table>
                 <thead>
                     <tr>
                         <th>TANGGAL & JAM</th>
-                        <th>UNIT RO</th>
-                        <th>TINDAKAN</th>
+                        <th>PLANT</th>
+                        <th>KOMPONEN / TINDAKAN</th>
                         <th>DURASI BERJALAN</th>
                         <th>OPERATOR</th>
-                        <th>AKSI</th>
                     </tr>
                 </thead>
                 <tbody id="historyTableBody">
@@ -291,13 +406,20 @@
         </div>
     </div>
 
-    <script>
-        const DB_URL = "https://dashboard-ro-ipa-semanan-4335e-default-rtdb.firebaseio.com/logs.json";
+    <!-- TOAST NOTIFICATION -->
+    <div id="toast" class="toast">Notifikasi</div>
 
+    <script>
+        const DB_URL = "https://dashboard-ro-ipa-semanan-4335e-default-rtdb.firebaseio.com/ipa_semanan_logs.json";
+
+        let roLogs = [];
+
+        // Set default datetime input
         const now = new Date();
         document.getElementById('roDate').valueAsDate = now;
         document.getElementById('roTime').value = now.toTimeString().substring(0,5);
 
+        // Clock Update
         function updateClock() {
             const current = new Date();
             document.getElementById('clock').innerText = current.toTimeString().split(' ')[0];
@@ -305,8 +427,7 @@
         }
         setInterval(updateClock, 1000);
 
-        let roLogs = [];
-
+        // Fetch logs dari Firebase Realtime Database
         async function fetchLogs() {
             try {
                 const res = await fetch(DB_URL);
@@ -319,13 +440,14 @@
                 }
                 renderROStats();
             } catch (err) {
-                console.error("Gagal mengambil data:", err);
+                console.error("Gagal mengambil data Firebase:", err);
             }
         }
 
         setInterval(fetchLogs, 5000);
         fetchLogs();
 
+        // Hitung durasi hari dan jam
         function calculateDaysAndHours(datetimeStr) {
             const start = new Date(datetimeStr);
             const current = new Date();
@@ -339,20 +461,25 @@
             return { days, hours, totalDays: days };
         }
 
+        // Render Kartu Plant 1 - Plant 4
         function renderROStats() {
-            const units = ['RO 1', 'RO 2', 'RO 3', 'RO 4'];
+            const plants = ['Plant 1', 'Plant 2', 'Plant 3', 'Plant 4'];
             
-            units.forEach((unit, idx) => {
+            plants.forEach((p, idx) => {
                 const idNum = idx + 1;
                 
-                const lastCart = roLogs.filter(l => l.unit === unit && l.action === 'Ganti Cartridge')
-                                       .sort((a,b) => new Date(b.datetime) - new Date(a.datetime))[0];
-                
-                const lastCip = roLogs.filter(l => l.unit === unit && l.action === 'CIP RO')
+                const lastBag = roLogs.filter(l => l.plant === p && l.action === 'Cartridge dan bag filter')
                                       .sort((a,b) => new Date(b.datetime) - new Date(a.datetime))[0];
 
-                updateCardDisplay(`ro${idNum}-cartridge-days`, lastCart, 30);
-                updateCardDisplay(`ro${idNum}-cip-days`, lastCip, 14);
+                const lastCart = roLogs.filter(l => l.plant === p && l.action === 'Cartridge RO')
+                                       .sort((a,b) => new Date(b.datetime) - new Date(a.datetime))[0];
+                
+                const lastCip = roLogs.filter(l => l.plant === p && l.action === 'CIP RO')
+                                      .sort((a,b) => new Date(b.datetime) - new Date(a.datetime))[0];
+
+                updateCardDisplay(`p${idNum}-bag-days`, lastBag, 14);
+                updateCardDisplay(`p${idNum}-cartridge-days`, lastCart, 30);
+                updateCardDisplay(`p${idNum}-cip-days`, lastCip, 14);
             });
 
             renderHistoryTable();
@@ -366,7 +493,7 @@
 
                 if (timeInfo.totalDays >= warnLimit) {
                     elem.className = "ro-stat-days status-danger";
-                } else if (timeInfo.totalDays >= warnLimit - 5) {
+                } else if (timeInfo.totalDays >= warnLimit - 3) {
                     elem.className = "ro-stat-days status-warn";
                 } else {
                     elem.className = "ro-stat-days status-normal";
@@ -377,38 +504,49 @@
             }
         }
 
+        // Render Tabel Log
         function renderHistoryTable() {
             const tbody = document.getElementById('historyTableBody');
+            const filter = document.getElementById('filterPlant').value;
             tbody.innerHTML = '';
 
-            const sortedLogs = [...roLogs].sort((a,b) => new Date(b.datetime) - new Date(a.datetime));
+            let filteredLogs = [...roLogs];
+            if (filter !== 'ALL') {
+                filteredLogs = filteredLogs.filter(l => l.plant === filter);
+            }
 
-            sortedLogs.forEach(log => {
+            filteredLogs.sort((a,b) => new Date(b.datetime) - new Date(a.datetime));
+
+            filteredLogs.forEach(log => {
                 const tr = document.createElement('tr');
-                const badgeClass = log.action === 'Ganti Cartridge' ? 'act-cartridge' : 'act-cip';
+                
+                let badgeClass = 'act-cartridge';
+                if (log.action === 'Cartridge dan bag filter') badgeClass = 'act-bag';
+                else if (log.action === 'CIP RO') badgeClass = 'act-cip';
+
                 const dt = new Date(log.datetime);
                 const dateFormatted = `${dt.toLocaleDateString('id-ID')} ${dt.toTimeString().substring(0,5)}`;
                 const timeInfo = calculateDaysAndHours(log.datetime);
-                
+
                 tr.innerHTML = `
                     <td>${dateFormatted}</td>
-                    <td><strong>${log.unit}</strong></td>
+                    <td><strong>${log.plant}</strong></td>
                     <td><span class="tag-action ${badgeClass}">${log.action}</span></td>
                     <td>${timeInfo.days} Hari ${timeInfo.hours} Jam lalu</td>
                     <td>${log.operator || '-'}</td>
-                    <td><button class="btn-del" onclick="deleteLog('${log.id}')">✕</button></td>
                 `;
                 tbody.appendChild(tr);
             });
         }
 
+        // Simpan Record ke Firebase
         async function saveRoLog(e) {
             e.preventDefault();
             const btn = document.getElementById('btnSubmit');
             btn.disabled = true;
             btn.innerText = "MENYIMPAN...";
 
-            const unit = document.getElementById('roUnit').value;
+            const plant = document.getElementById('roPlant').value;
             const action = document.getElementById('roAction').value;
             const date = document.getElementById('roDate').value;
             const time = document.getElementById('roTime').value;
@@ -420,30 +558,26 @@
                 await fetch(DB_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ unit, action, datetime, operator })
+                    body: JSON.stringify({ plant, action, datetime, operator })
                 });
 
                 document.getElementById('roOperator').value = '';
                 await fetchLogs();
-                alert(`Record ${action} ${unit} berhasil disimpan!`);
+                showToast(`Record ${action} untuk ${plant} berhasil disimpan!`);
             } catch (err) {
-                alert("Gagal menyimpan data. Pastikan terkoneksi internet.");
+                showToast("Gagal menyimpan data. Periksa koneksi internet.");
             } finally {
                 btn.disabled = false;
                 btn.innerText = "+ SIMPAN RECORD";
             }
         }
 
-        async function deleteLog(id) {
-            if(confirm('Yakin ingin menghapus data histori ini?')) {
-                try {
-                    const deleteUrl = `https://dashboard-ro-ipa-semanan-4335e-default-rtdb.firebaseio.com/logs/${id}.json`;
-                    await fetch(deleteUrl, { method: 'DELETE' });
-                    await fetchLogs();
-                } catch (err) {
-                    alert("Gagal menghapus data.");
-                }
-            }
+        // Toast Helper
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.innerText = msg;
+            toast.style.display = 'block';
+            setTimeout(() => { toast.style.display = 'none'; }, 3000);
         }
     </script>
 </body>
