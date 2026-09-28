@@ -179,7 +179,7 @@
         </div>
         <div class="time-box">
             <div id="clock">00:00:00</div>
-            <div style="font-size: 9px; color: var(--text-muted);">SYSTEM LOGGING ACTIVE</div>
+            <div style="font-size: 9px; color: var(--text-muted);">FIREBASE REALTIME ACTIVE</div>
         </div>
     </header>
 
@@ -190,55 +190,51 @@
 
         <!-- 4 RO SUMMARY CARDS -->
         <div class="ro-grid">
-            <!-- RO 1 -->
             <div class="ro-card">
                 <div class="ro-card-header"><span>SYSTEM RO 1</span><span style="font-size: 9px; color: var(--text-muted);">ACTIVE</span></div>
                 <div class="ro-stat-item">
                     <div class="ro-stat-label">Ketahanan Cartridge:</div>
-                    <div class="ro-stat-days" id="ro1-cartridge-days">0 Hari 0 Jam</div>
+                    <div class="ro-stat-days" id="ro1-cartridge-days">Loading...</div>
                 </div>
                 <div class="ro-stat-item">
                     <div class="ro-stat-label">Ketahanan CIP RO:</div>
-                    <div class="ro-stat-days" id="ro1-cip-days">0 Hari 0 Jam</div>
+                    <div class="ro-stat-days" id="ro1-cip-days">Loading...</div>
                 </div>
             </div>
 
-            <!-- RO 2 -->
             <div class="ro-card">
                 <div class="ro-card-header"><span>SYSTEM RO 2</span><span style="font-size: 9px; color: var(--text-muted);">ACTIVE</span></div>
                 <div class="ro-stat-item">
                     <div class="ro-stat-label">Ketahanan Cartridge:</div>
-                    <div class="ro-stat-days" id="ro2-cartridge-days">0 Hari 0 Jam</div>
+                    <div class="ro-stat-days" id="ro2-cartridge-days">Loading...</div>
                 </div>
                 <div class="ro-stat-item">
                     <div class="ro-stat-label">Ketahanan CIP RO:</div>
-                    <div class="ro-stat-days" id="ro2-cip-days">0 Hari 0 Jam</div>
+                    <div class="ro-stat-days" id="ro2-cip-days">Loading...</div>
                 </div>
             </div>
 
-            <!-- RO 3 -->
             <div class="ro-card">
                 <div class="ro-card-header"><span>SYSTEM RO 3</span><span style="font-size: 9px; color: var(--text-muted);">ACTIVE</span></div>
                 <div class="ro-stat-item">
                     <div class="ro-stat-label">Ketahanan Cartridge:</div>
-                    <div class="ro-stat-days" id="ro3-cartridge-days">0 Hari 0 Jam</div>
+                    <div class="ro-stat-days" id="ro3-cartridge-days">Loading...</div>
                 </div>
                 <div class="ro-stat-item">
                     <div class="ro-stat-label">Ketahanan CIP RO:</div>
-                    <div class="ro-stat-days" id="ro3-cip-days">0 Hari 0 Jam</div>
+                    <div class="ro-stat-days" id="ro3-cip-days">Loading...</div>
                 </div>
             </div>
 
-            <!-- RO 4 -->
             <div class="ro-card">
                 <div class="ro-card-header"><span>SYSTEM RO 4</span><span style="font-size: 9px; color: var(--text-muted);">ACTIVE</span></div>
                 <div class="ro-stat-item">
                     <div class="ro-stat-label">Ketahanan Cartridge:</div>
-                    <div class="ro-stat-days" id="ro4-cartridge-days">0 Hari 0 Jam</div>
+                    <div class="ro-stat-days" id="ro4-cartridge-days">Loading...</div>
                 </div>
                 <div class="ro-stat-item">
                     <div class="ro-stat-label">Ketahanan CIP RO:</div>
-                    <div class="ro-stat-days" id="ro4-cip-days">0 Hari 0 Jam</div>
+                    <div class="ro-stat-days" id="ro4-cip-days">Loading...</div>
                 </div>
             </div>
         </div>
@@ -273,7 +269,7 @@
                 <label>NAMA OPERATOR:</label>
                 <input type="text" id="roOperator" placeholder="Nama Operator" required>
             </div>
-            <button type="submit" class="btn-submit">+ SIMPAN RECORD</button>
+            <button type="submit" class="btn-submit" id="btnSubmit">+ SIMPAN RECORD</button>
         </form>
 
         <!-- TABEL HISTORI LOGS -->
@@ -296,7 +292,8 @@
     </div>
 
     <script>
-        // Set Default Tanggal & Jam Hari ini
+        const DB_URL = "https://dashboard-ro-ipa-semanan-4335e-default-rtdb.firebaseio.com/logs.json";
+
         const now = new Date();
         document.getElementById('roDate').valueAsDate = now;
         document.getElementById('roTime').value = now.toTimeString().substring(0,5);
@@ -304,18 +301,31 @@
         function updateClock() {
             const current = new Date();
             document.getElementById('clock').innerText = current.toTimeString().split(' ')[0];
-            // Update durasi secara real-time setiap detik
             renderROStats();
         }
         setInterval(updateClock, 1000);
 
-        // Persistent Logs Data (Internal Browser Storage)
-        let roLogs = JSON.parse(localStorage.getItem('ro_maintenance_logs')) || [
-            { id: 1, unit: 'RO 1', action: 'Ganti Cartridge', datetime: '2026-09-01T08:00', operator: 'Adi' },
-            { id: 2, unit: 'RO 1', action: 'CIP RO', datetime: '2026-09-15T10:30', operator: 'Budi' }
-        ];
+        let roLogs = [];
 
-        // Rumus Menghitung Hari dan Jam
+        async function fetchLogs() {
+            try {
+                const res = await fetch(DB_URL);
+                const data = await res.json();
+                roLogs = [];
+                if (data) {
+                    Object.keys(data).forEach(key => {
+                        roLogs.push({ id: key, ...data[key] });
+                    });
+                }
+                renderROStats();
+            } catch (err) {
+                console.error("Gagal mengambil data:", err);
+            }
+        }
+
+        setInterval(fetchLogs, 5000);
+        fetchLogs();
+
         function calculateDaysAndHours(datetimeStr) {
             const start = new Date(datetimeStr);
             const current = new Date();
@@ -341,8 +351,8 @@
                 const lastCip = roLogs.filter(l => l.unit === unit && l.action === 'CIP RO')
                                       .sort((a,b) => new Date(b.datetime) - new Date(a.datetime))[0];
 
-                updateCardDisplay(`ro${idNum}-cartridge-days`, lastCart, 30); // Warning di 30 hari
-                updateCardDisplay(`ro${idNum}-cip-days`, lastCip, 14);       // Warning di 14 hari
+                updateCardDisplay(`ro${idNum}-cartridge-days`, lastCart, 30);
+                updateCardDisplay(`ro${idNum}-cip-days`, lastCip, 14);
             });
 
             renderHistoryTable();
@@ -354,7 +364,6 @@
                 const timeInfo = calculateDaysAndHours(log.datetime);
                 elem.textContent = `${timeInfo.days} Hari ${timeInfo.hours} Jam`;
 
-                // Indikator Warna
                 if (timeInfo.totalDays >= warnLimit) {
                     elem.className = "ro-stat-days status-danger";
                 } else if (timeInfo.totalDays >= warnLimit - 5) {
@@ -387,14 +396,18 @@
                     <td><span class="tag-action ${badgeClass}">${log.action}</span></td>
                     <td>${timeInfo.days} Hari ${timeInfo.hours} Jam lalu</td>
                     <td>${log.operator || '-'}</td>
-                    <td><button class="btn-del" onclick="deleteLog(${log.id})">✕</button></td>
+                    <td><button class="btn-del" onclick="deleteLog('${log.id}')">✕</button></td>
                 `;
                 tbody.appendChild(tr);
             });
         }
 
-        function saveRoLog(e) {
+        async function saveRoLog(e) {
             e.preventDefault();
+            const btn = document.getElementById('btnSubmit');
+            btn.disabled = true;
+            btn.innerText = "MENYIMPAN...";
+
             const unit = document.getElementById('roUnit').value;
             const action = document.getElementById('roAction').value;
             const date = document.getElementById('roDate').value;
@@ -403,23 +416,35 @@
 
             const datetime = `${date}T${time}`;
 
-            roLogs.push({ id: Date.now(), unit, action, datetime, operator });
-            localStorage.setItem('ro_maintenance_logs', JSON.stringify(roLogs));
+            try {
+                await fetch(DB_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ unit, action, datetime, operator })
+                });
 
-            document.getElementById('roOperator').value = '';
-            renderROStats();
-            alert(`Record ${action} ${unit} berhasil disimpan!`);
-        }
-
-        function deleteLog(id) {
-            if(confirm('Yakin ingin menghapus data histori ini?')) {
-                roLogs = roLogs.filter(l => l.id !== id);
-                localStorage.setItem('ro_maintenance_logs', JSON.stringify(roLogs));
-                renderROStats();
+                document.getElementById('roOperator').value = '';
+                await fetchLogs();
+                alert(`Record ${action} ${unit} berhasil disimpan!`);
+            } catch (err) {
+                alert("Gagal menyimpan data. Pastikan terkoneksi internet.");
+            } finally {
+                btn.disabled = false;
+                btn.innerText = "+ SIMPAN RECORD";
             }
         }
 
-        renderROStats();
+        async function deleteLog(id) {
+            if(confirm('Yakin ingin menghapus data histori ini?')) {
+                try {
+                    const deleteUrl = `https://dashboard-ro-ipa-semanan-4335e-default-rtdb.firebaseio.com/logs/${id}.json`;
+                    await fetch(deleteUrl, { method: 'DELETE' });
+                    await fetchLogs();
+                } catch (err) {
+                    alert("Gagal menghapus data.");
+                }
+            }
+        }
     </script>
 </body>
 </html>
