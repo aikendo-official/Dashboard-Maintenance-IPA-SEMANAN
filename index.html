@@ -109,7 +109,7 @@
         /* RO GRID CARDS */
         .ro-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 12px;
         }
 
@@ -136,16 +136,34 @@
 
         .ro-stat-item {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            flex-direction: column;
+            gap: 4px;
             background: rgba(3, 7, 18, 0.6);
             padding: 8px 10px;
             border-radius: 6px;
         }
 
+        .ro-stat-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .ro-stat-sub {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 9px;
+            color: var(--text-muted);
+            border-top: 1px dashed rgba(255, 255, 255, 0.08);
+            padding-top: 4px;
+            margin-top: 2px;
+        }
+
         .ro-stat-label { font-size: 10px; color: var(--text-muted); font-weight: 600; }
         .ro-stat-days { font-family: 'Share Tech Mono', monospace; font-size: 12px; font-weight: 800; }
-        
+        .ro-stat-detail { color: #cbd5e1; font-weight: 600; }
+
         .status-normal { color: var(--green-accent); }
         .status-warn { color: var(--yellow-accent); }
         .status-danger { color: var(--red-accent); animation: pulse 1s infinite alternate; }
@@ -232,7 +250,31 @@
         .act-cartridge { background: rgba(0, 230, 118, 0.2); color: var(--green-accent); border: 1px solid rgba(0, 230, 118, 0.3); }
         .act-cip { background: rgba(179, 136, 255, 0.2); color: var(--purple-accent); border: 1px solid rgba(179, 136, 255, 0.3); }
 
-        /* BUTTON DELETE STYLES */
+        /* BUTTON AKSI STYLES (EDIT & DELETE) */
+        .action-btn-group {
+            display: flex;
+            gap: 6px;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .btn-edit {
+            background: rgba(255, 215, 64, 0.15);
+            color: var(--yellow-accent);
+            border: 1px solid rgba(255, 215, 64, 0.4);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-edit:hover {
+            background: var(--yellow-accent);
+            color: #000;
+        }
+
         .btn-delete {
             background: rgba(255, 61, 0, 0.15);
             color: var(--red-accent);
@@ -250,6 +292,77 @@
             color: #fff;
         }
 
+        /* MODAL STYLES */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(3, 7, 18, 0.85);
+            backdrop-filter: blur(4px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 3000;
+        }
+
+        .modal-box {
+            background: var(--card-bg-header);
+            border: 1px solid var(--cyan-accent);
+            box-shadow: 0 0 20px rgba(0, 229, 255, 0.2);
+            border-radius: 12px;
+            width: 90%;
+            max-width: 480px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 10px;
+        }
+
+        .modal-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 14px;
+            color: var(--cyan-accent);
+            font-weight: 800;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 18px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .modal-close:hover { color: #fff; }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 8px;
+        }
+
+        .btn-cancel {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 8px 14px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .btn-cancel:hover { background: rgba(255, 255, 255, 0.2); }
+
         /* TOAST NOTIFICATION */
         .toast {
             position: fixed;
@@ -263,7 +376,7 @@
             font-size: 12px;
             font-weight: 700;
             display: none;
-            z-index: 2000;
+            z-index: 4000;
             box-shadow: 0 4px 15px rgba(0,0,0,0.5);
         }
     </style>
@@ -295,16 +408,34 @@
             <div class="ro-card">
                 <div class="ro-card-header"><span>PLANT 1</span><span style="font-size: 9px; color: var(--text-muted);">ONLINE</span></div>
                 <div class="ro-stat-item">
-                    <div class="ro-stat-label">Cartridge & Bag Filter:</div>
-                    <div class="ro-stat-days" id="p1-bag-days">Loading...</div>
+                    <div class="ro-stat-top">
+                        <div class="ro-stat-label">Cartridge & Bag Filter:</div>
+                        <div class="ro-stat-days" id="p1-bag-days">Loading...</div>
+                    </div>
+                    <div class="ro-stat-sub">
+                        <span class="ro-stat-detail" id="p1-bag-dt">-</span>
+                        <span class="ro-stat-detail" id="p1-bag-op">Op: -</span>
+                    </div>
                 </div>
                 <div class="ro-stat-item">
-                    <div class="ro-stat-label">Cartridge RO:</div>
-                    <div class="ro-stat-days" id="p1-cartridge-days">Loading...</div>
+                    <div class="ro-stat-top">
+                        <div class="ro-stat-label">Cartridge RO:</div>
+                        <div class="ro-stat-days" id="p1-cartridge-days">Loading...</div>
+                    </div>
+                    <div class="ro-stat-sub">
+                        <span class="ro-stat-detail" id="p1-cartridge-dt">-</span>
+                        <span class="ro-stat-detail" id="p1-cartridge-op">Op: -</span>
+                    </div>
                 </div>
                 <div class="ro-stat-item">
-                    <div class="ro-stat-label">CIP RO:</div>
-                    <div class="ro-stat-days" id="p1-cip-days">Loading...</div>
+                    <div class="ro-stat-top">
+                        <div class="ro-stat-label">CIP RO:</div>
+                        <div class="ro-stat-days" id="p1-cip-days">Loading...</div>
+                    </div>
+                    <div class="ro-stat-sub">
+                        <span class="ro-stat-detail" id="p1-cip-dt">-</span>
+                        <span class="ro-stat-detail" id="p1-cip-op">Op: -</span>
+                    </div>
                 </div>
             </div>
 
@@ -312,16 +443,34 @@
             <div class="ro-card">
                 <div class="ro-card-header"><span>PLANT 2</span><span style="font-size: 9px; color: var(--text-muted);">ONLINE</span></div>
                 <div class="ro-stat-item">
-                    <div class="ro-stat-label">Cartridge & Bag Filter:</div>
-                    <div class="ro-stat-days" id="p2-bag-days">Loading...</div>
+                    <div class="ro-stat-top">
+                        <div class="ro-stat-label">Cartridge & Bag Filter:</div>
+                        <div class="ro-stat-days" id="p2-bag-days">Loading...</div>
+                    </div>
+                    <div class="ro-stat-sub">
+                        <span class="ro-stat-detail" id="p2-bag-dt">-</span>
+                        <span class="ro-stat-detail" id="p2-bag-op">Op: -</span>
+                    </div>
                 </div>
                 <div class="ro-stat-item">
-                    <div class="ro-stat-label">Cartridge RO:</div>
-                    <div class="ro-stat-days" id="p2-cartridge-days">Loading...</div>
+                    <div class="ro-stat-top">
+                        <div class="ro-stat-label">Cartridge RO:</div>
+                        <div class="ro-stat-days" id="p2-cartridge-days">Loading...</div>
+                    </div>
+                    <div class="ro-stat-sub">
+                        <span class="ro-stat-detail" id="p2-cartridge-dt">-</span>
+                        <span class="ro-stat-detail" id="p2-cartridge-op">Op: -</span>
+                    </div>
                 </div>
                 <div class="ro-stat-item">
-                    <div class="ro-stat-label">CIP RO:</div>
-                    <div class="ro-stat-days" id="p2-cip-days">Loading...</div>
+                    <div class="ro-stat-top">
+                        <div class="ro-stat-label">CIP RO:</div>
+                        <div class="ro-stat-days" id="p2-cip-days">Loading...</div>
+                    </div>
+                    <div class="ro-stat-sub">
+                        <span class="ro-stat-detail" id="p2-cip-dt">-</span>
+                        <span class="ro-stat-detail" id="p2-cip-op">Op: -</span>
+                    </div>
                 </div>
             </div>
 
@@ -329,16 +478,34 @@
             <div class="ro-card">
                 <div class="ro-card-header"><span>PLANT 3</span><span style="font-size: 9px; color: var(--text-muted);">ONLINE</span></div>
                 <div class="ro-stat-item">
-                    <div class="ro-stat-label">Cartridge & Bag Filter:</div>
-                    <div class="ro-stat-days" id="p3-bag-days">Loading...</div>
+                    <div class="ro-stat-top">
+                        <div class="ro-stat-label">Cartridge & Bag Filter:</div>
+                        <div class="ro-stat-days" id="p3-bag-days">Loading...</div>
+                    </div>
+                    <div class="ro-stat-sub">
+                        <span class="ro-stat-detail" id="p3-bag-dt">-</span>
+                        <span class="ro-stat-detail" id="p3-bag-op">Op: -</span>
+                    </div>
                 </div>
                 <div class="ro-stat-item">
-                    <div class="ro-stat-label">Cartridge RO:</div>
-                    <div class="ro-stat-days" id="p3-cartridge-days">Loading...</div>
+                    <div class="ro-stat-top">
+                        <div class="ro-stat-label">Cartridge RO:</div>
+                        <div class="ro-stat-days" id="p3-cartridge-days">Loading...</div>
+                    </div>
+                    <div class="ro-stat-sub">
+                        <span class="ro-stat-detail" id="p3-cartridge-dt">-</span>
+                        <span class="ro-stat-detail" id="p3-cartridge-op">Op: -</span>
+                    </div>
                 </div>
                 <div class="ro-stat-item">
-                    <div class="ro-stat-label">CIP RO:</div>
-                    <div class="ro-stat-days" id="p3-cip-days">Loading...</div>
+                    <div class="ro-stat-top">
+                        <div class="ro-stat-label">CIP RO:</div>
+                        <div class="ro-stat-days" id="p3-cip-days">Loading...</div>
+                    </div>
+                    <div class="ro-stat-sub">
+                        <span class="ro-stat-detail" id="p3-cip-dt">-</span>
+                        <span class="ro-stat-detail" id="p3-cip-op">Op: -</span>
+                    </div>
                 </div>
             </div>
 
@@ -346,16 +513,34 @@
             <div class="ro-card">
                 <div class="ro-card-header"><span>PLANT 4</span><span style="font-size: 9px; color: var(--text-muted);">ONLINE</span></div>
                 <div class="ro-stat-item">
-                    <div class="ro-stat-label">Cartridge & Bag Filter:</div>
-                    <div class="ro-stat-days" id="p4-bag-days">Loading...</div>
+                    <div class="ro-stat-top">
+                        <div class="ro-stat-label">Cartridge & Bag Filter:</div>
+                        <div class="ro-stat-days" id="p4-bag-days">Loading...</div>
+                    </div>
+                    <div class="ro-stat-sub">
+                        <span class="ro-stat-detail" id="p4-bag-dt">-</span>
+                        <span class="ro-stat-detail" id="p4-bag-op">Op: -</span>
+                    </div>
                 </div>
                 <div class="ro-stat-item">
-                    <div class="ro-stat-label">Cartridge RO:</div>
-                    <div class="ro-stat-days" id="p4-cartridge-days">Loading...</div>
+                    <div class="ro-stat-top">
+                        <div class="ro-stat-label">Cartridge RO:</div>
+                        <div class="ro-stat-days" id="p4-cartridge-days">Loading...</div>
+                    </div>
+                    <div class="ro-stat-sub">
+                        <span class="ro-stat-detail" id="p4-cartridge-dt">-</span>
+                        <span class="ro-stat-detail" id="p4-cartridge-op">Op: -</span>
+                    </div>
                 </div>
                 <div class="ro-stat-item">
-                    <div class="ro-stat-label">CIP RO:</div>
-                    <div class="ro-stat-days" id="p4-cip-days">Loading...</div>
+                    <div class="ro-stat-top">
+                        <div class="ro-stat-label">CIP RO:</div>
+                        <div class="ro-stat-days" id="p4-cip-days">Loading...</div>
+                    </div>
+                    <div class="ro-stat-sub">
+                        <span class="ro-stat-detail" id="p4-cip-dt">-</span>
+                        <span class="ro-stat-detail" id="p4-cip-op">Op: -</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -373,8 +558,14 @@
             <div class="ro-card">
                 <div class="ro-card-header"><span>WP 1</span><span style="font-size: 9px; color: var(--text-muted);">ONLINE</span></div>
                 <div class="ro-stat-item">
-                    <div class="ro-stat-label">Cartridge WP:</div>
-                    <div class="ro-stat-days" id="wp1-bag-days">Loading...</div>
+                    <div class="ro-stat-top">
+                        <div class="ro-stat-label">Cartridge WP:</div>
+                        <div class="ro-stat-days" id="wp1-bag-days">Loading...</div>
+                    </div>
+                    <div class="ro-stat-sub">
+                        <span class="ro-stat-detail" id="wp1-bag-dt">-</span>
+                        <span class="ro-stat-detail" id="wp1-bag-op">Op: -</span>
+                    </div>
                 </div>
             </div>
 
@@ -382,8 +573,14 @@
             <div class="ro-card">
                 <div class="ro-card-header"><span>WP 2</span><span style="font-size: 9px; color: var(--text-muted);">ONLINE</span></div>
                 <div class="ro-stat-item">
-                    <div class="ro-stat-label">Cartridge WP:</div>
-                    <div class="ro-stat-days" id="wp2-bag-days">Loading...</div>
+                    <div class="ro-stat-top">
+                        <div class="ro-stat-label">Cartridge WP:</div>
+                        <div class="ro-stat-days" id="wp2-bag-days">Loading...</div>
+                    </div>
+                    <div class="ro-stat-sub">
+                        <span class="ro-stat-detail" id="wp2-bag-dt">-</span>
+                        <span class="ro-stat-detail" id="wp2-bag-op">Op: -</span>
+                    </div>
                 </div>
             </div>
 
@@ -391,8 +588,14 @@
             <div class="ro-card">
                 <div class="ro-card-header"><span>WP 3</span><span style="font-size: 9px; color: var(--text-muted);">ONLINE</span></div>
                 <div class="ro-stat-item">
-                    <div class="ro-stat-label">Cartridge WP:</div>
-                    <div class="ro-stat-days" id="wp3-bag-days">Loading...</div>
+                    <div class="ro-stat-top">
+                        <div class="ro-stat-label">Cartridge WP:</div>
+                        <div class="ro-stat-days" id="wp3-bag-days">Loading...</div>
+                    </div>
+                    <div class="ro-stat-sub">
+                        <span class="ro-stat-detail" id="wp3-bag-dt">-</span>
+                        <span class="ro-stat-detail" id="wp3-bag-op">Op: -</span>
+                    </div>
                 </div>
             </div>
 
@@ -400,8 +603,14 @@
             <div class="ro-card">
                 <div class="ro-card-header"><span>WP 4</span><span style="font-size: 9px; color: var(--text-muted);">ONLINE</span></div>
                 <div class="ro-stat-item">
-                    <div class="ro-stat-label">Cartridge WP:</div>
-                    <div class="ro-stat-days" id="wp4-bag-days">Loading...</div>
+                    <div class="ro-stat-top">
+                        <div class="ro-stat-label">Cartridge WP:</div>
+                        <div class="ro-stat-days" id="wp4-bag-days">Loading...</div>
+                    </div>
+                    <div class="ro-stat-sub">
+                        <span class="ro-stat-detail" id="wp4-bag-dt">-</span>
+                        <span class="ro-stat-detail" id="wp4-bag-op">Op: -</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -410,7 +619,7 @@
         <form class="form-box" id="roForm" onsubmit="saveRoLog(event)">
             <div class="input-group">
                 <label>PLANT / WP:</label>
-                <select id="roPlant" onchange="handleUnitChange()" required>
+                <select id="roPlant" onchange="handleUnitChange('roPlant', 'roAction', 'optPlantBag', 'optCartridgeRo', 'optCipRo', 'optWpCartridge')" required>
                     <optgroup label="Plant">
                         <option value="Plant 1">Plant 1</option>
                         <option value="Plant 2">Plant 2</option>
@@ -480,12 +689,73 @@
                         <th>KOMPONEN / TINDAKAN</th>
                         <th>DURASI BERJALAN</th>
                         <th>OPERATOR</th>
-                        <th style="text-align: center;">AKSI</th>
+                        <th style="text-align: center; width: 140px;">AKSI</th>
                     </tr>
                 </thead>
                 <tbody id="historyTableBody">
                 </tbody>
             </table>
+        </div>
+    </div>
+
+    <!-- MODAL EDIT RECORD -->
+    <div id="modalEdit" class="modal-overlay">
+        <div class="modal-box">
+            <div class="modal-header">
+                <div class="modal-title">✏️ EDIT RECORD MAINTENANCE</div>
+                <button type="button" class="modal-close" onclick="closeEditModal()">✕</button>
+            </div>
+            <form id="editRoForm" onsubmit="saveEditRoLog(event)" style="display: flex; flex-direction: column; gap: 12px;">
+                <input type="hidden" id="editLogId">
+                
+                <div class="input-group">
+                    <label>PLANT / WP:</label>
+                    <select id="editRoPlant" onchange="handleUnitChange('editRoPlant', 'editRoAction', 'editOptPlantBag', 'editOptCartridgeRo', 'editOptCipRo', 'editOptWpCartridge')" required>
+                        <optgroup label="Plant">
+                            <option value="Plant 1">Plant 1</option>
+                            <option value="Plant 2">Plant 2</option>
+                            <option value="Plant 3">Plant 3</option>
+                            <option value="Plant 4">Plant 4</option>
+                        </optgroup>
+                        <optgroup label="Water Purifier (WP)">
+                            <option value="WP 1">WP 1</option>
+                            <option value="WP 2">WP 2</option>
+                            <option value="WP 3">WP 3</option>
+                            <option value="WP 4">WP 4</option>
+                        </optgroup>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label>JENIS KOMPONEN / TINDAKAN:</label>
+                    <select id="editRoAction" required>
+                        <option value="Cartridge dan bag filter" id="editOptPlantBag">Cartridge dan bag filter</option>
+                        <option value="Cartridge RO" id="editOptCartridgeRo">Cartridge RO</option>
+                        <option value="CIP RO" id="editOptCipRo">CIP RO</option>
+                        <option value="Cartridge" id="editOptWpCartridge" style="display:none;">Cartridge</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label>TANGGAL:</label>
+                    <input type="date" id="editRoDate" required>
+                </div>
+
+                <div class="input-group">
+                    <label>JAM EKSEKUSI:</label>
+                    <input type="time" id="editRoTime" required>
+                </div>
+
+                <div class="input-group">
+                    <label>NAMA OPERATOR:</label>
+                    <input type="text" id="editRoOperator" placeholder="Nama Operator" required>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn-cancel" onclick="closeEditModal()">BATAL</button>
+                    <button type="submit" class="btn-submit" id="btnEditSubmit">UPDATE</button>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -502,25 +772,23 @@
         document.getElementById('roDate').valueAsDate = now;
         document.getElementById('roTime').value = now.toTimeString().substring(0,5);
 
-        // Filter otomatis Jenis Komponen saat WP / Plant terpilih
-        function handleUnitChange() {
-            const selectedUnit = document.getElementById('roPlant').value;
-            const actionSelect = document.getElementById('roAction');
+        // Filter otomatis Jenis Komponen saat WP / Plant terpilih (Re-usable)
+        function handleUnitChange(plantSelectId, actionSelectId, optBagId, optCartId, optCipId, optWpCartId) {
+            const selectedUnit = document.getElementById(plantSelectId).value;
+            const actionSelect = document.getElementById(actionSelectId);
             
-            const optPlantBag = document.getElementById('optPlantBag');
-            const optCartridgeRo = document.getElementById('optCartridgeRo');
-            const optCipRo = document.getElementById('optCipRo');
-            const optWpCartridge = document.getElementById('optWpCartridge');
+            const optPlantBag = document.getElementById(optBagId);
+            const optCartridgeRo = document.getElementById(optCartId);
+            const optCipRo = document.getElementById(optCipId);
+            const optWpCartridge = document.getElementById(optWpCartId);
 
             if (selectedUnit.startsWith('WP')) {
-                // Sembunyikan opsi Plant, tampilkan & pilih Cartridge saja
                 optPlantBag.style.display = 'none';
                 optCartridgeRo.style.display = 'none';
                 optCipRo.style.display = 'none';
                 optWpCartridge.style.display = 'block';
                 actionSelect.value = "Cartridge";
             } else {
-                // Tampilkan opsi Plant, sembunyikan opsi WP Cartridge
                 optPlantBag.style.display = 'block';
                 optCartridgeRo.style.display = 'block';
                 optCipRo.style.display = 'block';
@@ -571,6 +839,15 @@
             return { days, hours, totalDays: days };
         }
 
+        // Format tanggal & jam singkat
+        function formatShortDateTime(datetimeStr) {
+            if (!datetimeStr) return '-';
+            const dt = new Date(datetimeStr);
+            const dateStr = dt.toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: '2-digit' });
+            const timeStr = dt.toTimeString().substring(0, 5);
+            return `${dateStr} ${timeStr}`;
+        }
+
         // Render Kartu Plant 1 - Plant 4 dan WP 1 - WP 4
         function renderROStats() {
             const plants = ['Plant 1', 'Plant 2', 'Plant 3', 'Plant 4'];
@@ -589,9 +866,9 @@
                 const lastCip = roLogs.filter(l => l.plant === p && l.action === 'CIP RO')
                                       .sort((a,b) => new Date(b.datetime) - new Date(a.datetime))[0];
 
-                updateCardDisplay(`p${idNum}-bag-days`, lastBag, 14);
-                updateCardDisplay(`p${idNum}-cartridge-days`, lastCart, 30);
-                updateCardDisplay(`p${idNum}-cip-days`, lastCip, 14);
+                updateCardDisplay(`p${idNum}-bag`, lastBag, 14);
+                updateCardDisplay(`p${idNum}-cartridge`, lastCart, 30);
+                updateCardDisplay(`p${idNum}-cip`, lastCip, 14);
             });
 
             // Render WP 1 - WP 4
@@ -601,29 +878,37 @@
                 const lastWpCart = roLogs.filter(l => l.plant === wp && (l.action === 'Cartridge' || l.action === 'Cartridge dan bag filter'))
                                          .sort((a,b) => new Date(b.datetime) - new Date(a.datetime))[0];
 
-                updateCardDisplay(`wp${idNum}-bag-days`, lastWpCart, 14);
+                updateCardDisplay(`wp${idNum}-bag`, lastWpCart, 14);
             });
 
             renderHistoryTable();
         }
 
-        function updateCardDisplay(elemId, log, warnLimit) {
-            const elem = document.getElementById(elemId);
-            if (elem) {
+        function updateCardDisplay(prefixId, log, warnLimit) {
+            const elemDays = document.getElementById(`${prefixId}-days`);
+            const elemDt = document.getElementById(`${prefixId}-dt`);
+            const elemOp = document.getElementById(`${prefixId}-op`);
+
+            if (elemDays) {
                 if (log) {
                     const timeInfo = calculateDaysAndHours(log.datetime);
-                    elem.textContent = `${timeInfo.days} Hari ${timeInfo.hours} Jam`;
+                    elemDays.textContent = `${timeInfo.days} Hari ${timeInfo.hours} Jam`;
 
                     if (timeInfo.totalDays >= warnLimit) {
-                        elem.className = "ro-stat-days status-danger";
+                        elemDays.className = "ro-stat-days status-danger";
                     } else if (timeInfo.totalDays >= warnLimit - 3) {
-                        elem.className = "ro-stat-days status-warn";
+                        elemDays.className = "ro-stat-days status-warn";
                     } else {
-                        elem.className = "ro-stat-days status-normal";
+                        elemDays.className = "ro-stat-days status-normal";
                     }
+
+                    if (elemDt) elemDt.textContent = formatShortDateTime(log.datetime);
+                    if (elemOp) elemOp.textContent = `Op: ${log.operator || '-'}`;
                 } else {
-                    elem.textContent = `- (Belum ada)`;
-                    elem.className = "ro-stat-days";
+                    elemDays.textContent = `- (Belum ada)`;
+                    elemDays.className = "ro-stat-days";
+                    if (elemDt) elemDt.textContent = '-';
+                    if (elemOp) elemOp.textContent = 'Op: -';
                 }
             }
         }
@@ -659,7 +944,10 @@
                     <td>${timeInfo.days} Hari ${timeInfo.hours} Jam lalu</td>
                     <td>${log.operator || '-'}</td>
                     <td style="text-align: center;">
-                        <button class="btn-delete" onclick="deleteRoLog('${log.id}', '${log.plant}', '${log.action}')">🗑️ Hapus</button>
+                        <div class="action-btn-group">
+                            <button class="btn-edit" onclick="openEditModal('${log.id}')">✏️ Edit</button>
+                            <button class="btn-delete" onclick="deleteRoLog('${log.id}', '${log.plant}', '${log.action}')">🗑️ Hapus</button>
+                        </div>
                     </td>
                 `;
                 tbody.appendChild(tr);
@@ -696,6 +984,74 @@
             } finally {
                 btn.disabled = false;
                 btn.innerText = "SAVE";
+            }
+        }
+
+        // Buka Modal Edit & Isi Data
+        function openEditModal(id) {
+            const log = roLogs.find(l => l.id === id);
+            if (!log) return;
+
+            document.getElementById('editLogId').value = log.id;
+            document.getElementById('editRoPlant').value = log.plant;
+            
+            // Trigger penyesuaian dropdown aksi sesuai plant/WP
+            handleUnitChange('editRoPlant', 'editRoAction', 'editOptPlantBag', 'editOptCartridgeRo', 'editOptCipRo', 'editOptWpCartridge');
+            
+            document.getElementById('editRoAction').value = log.action;
+
+            if (log.datetime) {
+                const [d, t] = log.datetime.split('T');
+                document.getElementById('editRoDate').value = d;
+                document.getElementById('editRoTime').value = t ? t.substring(0,5) : '00:00';
+            }
+
+            document.getElementById('editRoOperator').value = log.operator || '';
+
+            document.getElementById('modalEdit').style.display = 'flex';
+        }
+
+        // Tutup Modal Edit
+        function closeEditModal() {
+            document.getElementById('modalEdit').style.display = 'none';
+        }
+
+        // Simpan Perubahan Edit ke Firebase
+        async function saveEditRoLog(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btnEditSubmit');
+            btn.disabled = true;
+            btn.innerText = "UPDATING...";
+
+            const id = document.getElementById('editLogId').value;
+            const plant = document.getElementById('editRoPlant').value;
+            const action = document.getElementById('editRoAction').value;
+            const date = document.getElementById('editRoDate').value;
+            const time = document.getElementById('editRoTime').value;
+            const operator = document.getElementById('editRoOperator').value;
+
+            const datetime = `${date}T${time}`;
+
+            try {
+                const res = await fetch(`${BASE_URL}/${id}.json`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ plant, action, datetime, operator })
+                });
+
+                if (res.ok) {
+                    showToast(`Record ${plant} berhasil diperbarui!`);
+                    closeEditModal();
+                    await fetchLogs();
+                } else {
+                    showToast("Gagal memperbarui data di server.");
+                }
+            } catch (err) {
+                console.error("Gagal update data:", err);
+                showToast("Koneksi gagal saat memperbarui data.");
+            } finally {
+                btn.disabled = false;
+                btn.innerText = "UPDATE";
             }
         }
 
